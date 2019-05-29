@@ -20,6 +20,14 @@ output "google_compute_subnetwork.main.*.ip_cidr_range" {
   }"
 }
 
+output "google_compute_firewall.ingress-allow-any.target_tags" {
+  value = ["${google_compute_firewall.ingress-allow-any.target_tags}"]
+}
+
+output "google_compute_firewall.egress-allow-any.target_tags" {
+  value = ["${google_compute_firewall.egress-allow-any.target_tags}"]
+}
+
 output "google_compute_firewall.ingress-allow-ssh-from-specific-ranges.target_tags" {
   value = ["${google_compute_firewall.ingress-allow-ssh-from-specific-ranges.target_tags}"]
 }
