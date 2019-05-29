@@ -23,6 +23,10 @@ resource "google_compute_firewall" "ingress-allow-any" {
   source_ranges = [
     "${google_compute_subnetwork.main.*.ip_cidr_range}",
   ]
+
+  target_tags = [
+    "firewall-ingress-allow-any",
+  ]
 }
 
 resource "google_compute_firewall" "egress-allow-any" {
@@ -45,6 +49,10 @@ resource "google_compute_firewall" "egress-allow-any" {
   destination_ranges = [
     "0.0.0.0/0",
   ]
+
+  target_tags = [
+    "firewall-egress-allow-any",
+  ]
 }
 
 resource "google_compute_firewall" "ingress-allow-ssh-from-specific-ranges" {
@@ -60,7 +68,7 @@ resource "google_compute_firewall" "ingress-allow-ssh-from-specific-ranges" {
   source_ranges = ["${var.cidr_blocks_allow_ssh}"]
 
   target_tags = [
-    "firewall-allow-ssh-from-any",
+    "firewall-ingress-allow-ssh-from-specific-ranges",
   ]
 }
 
@@ -77,6 +85,6 @@ resource "google_compute_firewall" "ingress-allow-http-from-specific-ranges" {
   source_ranges = ["${var.cidr_blocks_allow_http}"]
 
   target_tags = [
-    "firewall-allow-http-from-any",
+    "firewall-ingress-allow-http-from-specific-ranges",
   ]
 }
