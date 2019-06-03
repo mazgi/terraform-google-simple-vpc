@@ -8,14 +8,11 @@ module "simple-ml-google-vpc" {
   basename = "simple-ml"
 
   cidr_blocks_allow_ssh = [
-    "192.0.2.0/24",                   # Your specific IP address range
-    "${var.current_external_ipaddr}", # Get local machine external IP address via direnv and `curl ifconfig.io`.
+    "192.0.2.0/24",              # Your specific IP address range
+    var.current_external_ipaddr, # Get local machine external IP address via direnv and `curl ifconfig.io`.
   ]
 }
 
-output "simple-ml-google-vpc.google_compute_address.for_router" {
-  value = "${module.simple-ml-google-vpc.google_compute_address.for_router}"
-}
 
 # --------------------------------
 # Addtional firewall rules for Jupyter Notebook
@@ -23,7 +20,7 @@ output "simple-ml-google-vpc.google_compute_address.for_router" {
 resource "google_compute_firewall" "ingress-allow-jupyternotebook-from-specific-ranges" {
   direction = "INGRESS"
   name      = "ingress-allow-http-from-specific-ranges"
-  network   = "${module.simple-ml-google-vpc.google_compute_network.main.self_link}"
+  network   = module.simple-ml-google-vpc.google_compute_network.main.self_link
 
   allow {
     protocol = "tcp"
@@ -31,8 +28,8 @@ resource "google_compute_firewall" "ingress-allow-jupyternotebook-from-specific-
   }
 
   source_ranges = [
-    "192.0.2.0/24",                   # Your specific IP address range
-    "${var.current_external_ipaddr}", # Get local machine external IP address via direnv and `curl ifconfig.io`.
+    "192.0.2.0/24",              # Your specific IP address range
+    var.current_external_ipaddr, # Get local machine external IP address via direnv and `curl ifconfig.io`.
   ]
 
   target_tags = [
@@ -79,14 +76,14 @@ resource "google_compute_instance" "simple-ml-gpu-instance-1" {
   //        * google_compute_instance.step: Error creating instance: googleapi: Error 400: Invalid value for field 'resource.networkInterfaces[0]': '{  "network": "projects/****/global/networks/****"}'. Subnetwork should be specified for custom subnetmode network, invalid
   network_interface {
     #network = "${module.simple-ml-google-vpc.google_compute_network.main.self_link}"
-    subnetwork    = "${module.simple-ml-google-vpc.google_compute_subnetwork.main.*.ip_cidr_range[element(keys(module.simple-ml-google-vpc.google_compute_subnetwork.main.*.ip_cidr_range), 0)]}"
-    access_config = {}
+    subnetwork = module.simple-ml-google-vpc.google_compute_subnetwork.main[0].self_link
+    access_config {}
   }
 
-  tags = [
-    "${module.simple-ml-google-vpc.google_compute_firewall.ingress-allow-ssh-from-specific-ranges.target_tags}",
-    "firewall-ingress-allow-jupyternotebook-from-specific-ranges",
-  ]
+  tags = concat(
+    module.simple-ml-google-vpc.google_compute_firewall.ingress-allow-ssh-from-specific-ranges.target_tags[*],
+    google_compute_firewall.ingress-allow-jupyternotebook-from-specific-ranges.target_tags[*],
+  )
 
   #metadata_startup_script = <<-EOF
   ##!/bin/bash -eu
@@ -94,6 +91,3 @@ resource "google_compute_instance" "simple-ml-gpu-instance-1" {
   #EOF
 }
 
-output "google_compute_instance.simple-ml-gpu-instance-1.network_interface.0.access_config.0.nat_ip" {
-  value = "${google_compute_instance.simple-ml-gpu-instance-1.network_interface.0.access_config.0.nat_ip}"
-}
