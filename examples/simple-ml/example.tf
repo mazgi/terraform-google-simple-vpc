@@ -69,13 +69,9 @@ resource "google_compute_instance" "simple-ml-gpu-instance-1" {
   // NOTE: The `network` is cannot work if you using "custom subnetmode network", you should set the `subnetwork` instead of the `network`.
   //       For example, the following error has occurred:
   // --------
-  // Error: Error applying plan:
-  // 
-  // 1 error occurred:
-  //        * google_compute_instance.step: 1 error occurred:
-  //        * google_compute_instance.step: Error creating instance: googleapi: Error 400: Invalid value for field 'resource.networkInterfaces[0]': '{  "network": "projects/****/global/networks/****"}'. Subnetwork should be specified for custom subnetmode network, invalid
+  // Error: Error creating instance: googleapi: Error 400: Invalid value for field 'resource.networkInterfaces[0]': '{  "network": "projects/****/global/networks/simple-ml",  "accessConfig": [{    "t...'. Subnetwork should be specified for custom subnetmode network, invalid
   network_interface {
-    #network = "${module.simple-ml-google-vpc.google_compute_network.main.self_link}"
+    #network = module.simple-ml-google-vpc.google_compute_network.main.self_link
     subnetwork = module.simple-ml-google-vpc.google_compute_subnetwork.main[0].self_link
     access_config {}
   }
