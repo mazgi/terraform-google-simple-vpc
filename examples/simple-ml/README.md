@@ -10,10 +10,10 @@
 Edit the `.envrc` file with `direnv edit .` command.
 
 ```
-export PROJECT_UUID='YOUR_UNIQ_STRING'
+export PROJECT_UUID='YOUR-UNIQUE-STRING'
 export GOOGLE_CREDENTIALS="${PWD}/gcp-service-account-key.json"
 export CLOUDSDK_CORE_PROJECT="YOUR-GCP-PROJECT-ID"
-export TF_VAR_gcp_project_id="YOUR-GCP-PROJECT-ID"
+export TF_VAR_gcp_project_id="${CLOUDSDK_CORE_PROJECT}"
 export TF_VAR_current_external_ipaddr="$(curl -Ls ifconfig.io)/32"
 ```
 
@@ -23,15 +23,16 @@ see https://cloud.google.com/storage/docs/gsutil
 
 ```shellsession
 $ gsutil mb gs://${PROJECT_UUID}/
-Creating gs://YOUR_UNIQ_STRING/...
+Creating gs://YOUR-UNIQUE-STRING/...
 $ gsutil acl set private gs://${PROJECT_UUID}/
-Setting ACL on gs://YOUR_UNIQ_STRING/...
+Setting ACL on gs://YOUR-UNIQUE-STRING/...
 $ gsutil versioning set on gs://${PROJECT_UUID}/
-Enabling versioning for gs://YOUR_UNIQ_STRING/...
+Enabling versioning for gs://YOUR-UNIQUE-STRING/...
 ```
+
 ```shellsession
 $ gsutil ls -Lb gs://${PROJECT_UUID}/
-gs://YOUR_UNIQ_STRING/ :
+gs://YOUR-UNIQUE-STRING/ :
         Storage class:                  STANDARD
         Location constraint:            US
         Versioning enabled:             True
@@ -142,9 +143,10 @@ WARNING: Unable to find a suitable destination to install 32-bit compatibility l
 
 Nvidia driver installed.
 ```
+
 ```shellsession
 YOUR_NAME@gpu-instance-1:~$ nvidia-smi
-Wed May 29 01:42:41 2019       
+Wed May 29 01:42:41 2019
 +-----------------------------------------------------------------------------+
 | NVIDIA-SMI 410.104      Driver Version: 410.104      CUDA Version: 10.0     |
 |-------------------------------+----------------------+----------------------+
@@ -154,7 +156,7 @@ Wed May 29 01:42:41 2019
 |   0  Tesla V100-SXM2...  Off  | 00000000:00:04.0 Off |                    0 |
 | N/A   39C    P0    39W / 300W |      0MiB / 16130MiB |      0%      Default |
 +-------------------------------+----------------------+----------------------+
-                                                                               
+
 +-----------------------------------------------------------------------------+
 | Processes:                                                       GPU Memory |
 |  GPU       PID   Type   Process name                             Usage      |
@@ -191,28 +193,28 @@ YOUR_NAME@gpu-instance-1:~/sample-files/docker-compose-2.3-tensorflow$ docker-co
 Creating network "docker-compose-23-tensorflow_default" with the default driver
 Creating docker-compose-23-tensorflow_tensorflow_1 ... done
 Attaching to docker-compose-23-tensorflow_tensorflow_1
-tensorflow_1  | 
-tensorflow_1  | ________                               _______________                
+tensorflow_1  |
+tensorflow_1  | ________                               _______________
 tensorflow_1  | ___  __/__________________________________  ____/__  /________      __
 tensorflow_1  | __  /  _  _ \_  __ \_  ___/  __ \_  ___/_  /_   __  /_  __ \_ | /| / /
-tensorflow_1  | _  /   /  __/  / / /(__  )/ /_/ /  /   _  __/   _  / / /_/ /_ |/ |/ / 
+tensorflow_1  | _  /   /  __/  / / /(__  )/ /_/ /  /   _  __/   _  / / /_/ /_ |/ |/ /
 tensorflow_1  | /_/    \___//_/ /_//____/ \____//_/    /_/      /_/  \____/____/|__/
-tensorflow_1  | 
-tensorflow_1  | 
+tensorflow_1  |
+tensorflow_1  |
 tensorflow_1  | WARNING: You are running this container as root, which can cause new files in
 tensorflow_1  | mounted volumes to be created as the root user on your host machine.
-tensorflow_1  | 
+tensorflow_1  |
 tensorflow_1  | To avoid this, run the container by specifying your user's userid:
-tensorflow_1  | 
+tensorflow_1  |
 tensorflow_1  | $ docker run -u $(id -u):$(id -g) args...
-tensorflow_1  | 
+tensorflow_1  |
 tensorflow_1  | [I 02:06:12.226 NotebookApp] Writing notebook server cookie secret to /root/.local/share/jupyter/runtime/notebook_cookie_secret
 tensorflow_1  | [I 02:06:13.377 NotebookApp] Serving notebooks from local directory: /tf
 tensorflow_1  | [I 02:06:13.379 NotebookApp] The Jupyter Notebook is running at:
 tensorflow_1  | [I 02:06:13.379 NotebookApp] http://(a1f1fa0efd18 or 127.0.0.1):8888/?token=0f6db970261eee356caa9fb149c81ad57e0ab68127d3c486
 tensorflow_1  | [I 02:06:13.380 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
-tensorflow_1  | [C 02:06:13.386 NotebookApp] 
-tensorflow_1  |     
+tensorflow_1  | [C 02:06:13.386 NotebookApp]
+tensorflow_1  |
 tensorflow_1  |     To access the notebook, open this file in a browser:
 tensorflow_1  |         file:///root/.local/share/jupyter/runtime/nbserver-8-open.html
 tensorflow_1  |     Or copy and paste one of these URLs:
