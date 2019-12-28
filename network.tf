@@ -11,11 +11,10 @@ resource "google_compute_subnetwork" "main" {
 
   count = length(keys(var.cidr_blocks_subnetworks))
 
-  ip_cidr_range    = element(keys(var.cidr_blocks_subnetworks), count.index)
-  name             = format("%s-%d", var.basename, count.index)
-  network          = google_compute_network.main.self_link
-  enable_flow_logs = true
-  region           = lookup(var.cidr_blocks_subnetworks, element(keys(var.cidr_blocks_subnetworks), count.index))
+  ip_cidr_range = element(keys(var.cidr_blocks_subnetworks), count.index)
+  name          = format("%s-%d", var.basename, count.index)
+  network       = google_compute_network.main.self_link
+  region        = lookup(var.cidr_blocks_subnetworks, element(keys(var.cidr_blocks_subnetworks), count.index))
 
   log_config {
     flow_sampling = var.flow_sampling
