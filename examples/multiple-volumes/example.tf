@@ -14,7 +14,12 @@ module "multiple-volumes-google-vpc" {
 }
 
 # --------------------------------
-# Google Compute Engine instance configuration
+# Google Cloud Filestore instance configuration
+
+resource "google_project_service" "file" {
+  service            = "file.googleapis.com"
+  disable_on_destroy = false
+}
 
 resource "google_filestore_instance" "standard" {
   name = "standard"
