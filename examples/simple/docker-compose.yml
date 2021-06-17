@@ -1,0 +1,47 @@
+version: "3.7"
+
+services:
+  provisioning:
+    build:
+      context: Dockerfile.d/provisioning
+      args:
+        UID: ${UID:-0}
+        GID: ${GID:-0}
+    command:
+      - bash
+      - -lc
+      - |
+        . /project/scripts/provisioning.init-with-google.sh
+    environment:
+      - CURRENT_ENV_NAME
+      - CLOUDSDK_CORE_PROJECT
+      - GOOGLE_APPLICATION_CREDENTIALS=/project/config/${CURRENT_ENV_NAME}/credentials/google-cloud-keyfile.json
+      - PROJECT_UNIQUE_ID
+      - TF_DATA_DIR=/tmp/provisioning
+      - TF_VAR_basename
+      - TF_VAR_cidr_blocks_allow_http
+      - TF_VAR_cidr_blocks_allow_ssh
+      - TF_VAR_current_env_name=${CURRENT_ENV_NAME}
+      - TF_VAR_gcp_project_id=${CLOUDSDK_CORE_PROJECT}
+      - TF_VAR_ip_cidr_range=10.0.0.0/24
+      - TF_VAR_project_unique_id=${PROJECT_UNIQUE_ID}
+    user: "${UID:-0}:${GID:-0}"
+    volumes:
+      - provisioning-tmp:/tmp/provisioning
+      - provisioning-home-root:/root # for macOS
+      - provisioning-home-developer:/home/developer
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./Dockerfile.d:/project/Dockerfile.d
+      - ./config:/project/config
+      - ./provisioning:/project/workspace
+      - ./scripts:/project/scripts
+      - ${HOME}/.ssh:/root/.ssh:ro # for macOS
+      - ${HOME}/.ssh:/home/developer/.ssh:ro
+    working_dir: /project/workspace
+volumes:
+  provisioning-tmp:
+    driver: local
+  provisioning-home-root:
+    driver: local
+  provisioning-home-developer:
+    driver: local
